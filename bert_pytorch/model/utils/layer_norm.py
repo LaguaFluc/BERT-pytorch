@@ -7,6 +7,7 @@ class LayerNorm(nn.Module):
 
     def __init__(self, features, eps=1e-6):
         super(LayerNorm, self).__init__()
+        # 将a_2, b_2作为可以训练的参数
         self.a_2 = nn.Parameter(torch.ones(features))
         self.b_2 = nn.Parameter(torch.zeros(features))
         self.eps = eps
@@ -14,4 +15,6 @@ class LayerNorm(nn.Module):
     def forward(self, x):
         mean = x.mean(-1, keepdim=True)
         std = x.std(-1, keepdim=True)
+        # 对最后 一个维度标准化，
+        # 这里的a_2像是标准差sigma, b_2像是均值mu
         return self.a_2 * (x - mean) / (std + self.eps) + self.b_2
