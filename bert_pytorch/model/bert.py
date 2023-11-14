@@ -19,11 +19,15 @@ class BERT(nn.Module):
         """
 
         super().__init__()
-        self.hidden = hidden
+        self.hidden = hidden            # word embedding size(word_dim)
         self.n_layers = n_layers
         self.attn_heads = attn_heads
 
         # paper noted they used 4*hidden_size for ff_network_hidden_size
+        # also see https://github.com/huggingface/pytorch-pretrained-BERT
+        # NOTE: feed forward layer is: two linear layers of feed forward network
+        # first linear layer: nn.Linear(hidden, feed_forward_hidden)
+        # second linear layer: nn.Linear(feed_forward_hidden, hidden)
         self.feed_forward_hidden = hidden * 4
 
         # embedding for BERT, sum of positional, segment, token embeddings
@@ -39,6 +43,8 @@ class BERT(nn.Module):
         mask = (x > 0).unsqueeze(1).repeat(1, x.size(1), 1).unsqueeze(1)
 
         # embedding the indexed sequence to sequence of vectors
+        # after embedding: x.shape = [batch_size, seq_len, hidden_size]
+        # segment_info: segment_label
         x = self.embedding(x, segment_info)
 
         # running over multiple transformer blocks

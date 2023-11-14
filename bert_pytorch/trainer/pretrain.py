@@ -59,6 +59,7 @@ class BERTTrainer:
         self.optim_schedule = ScheduledOptim(self.optim, self.bert.hidden, n_warmup_steps=warmup_steps)
 
         # Using Negative Log Likelihood Loss function for predicting the masked_token
+        # ignore_index = 0, 说明对padding部分的loss不进行计算
         self.criterion = nn.NLLLoss(ignore_index=0)
 
         self.log_freq = log_freq

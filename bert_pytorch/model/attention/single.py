@@ -21,6 +21,8 @@ class Attention(nn.Module):
         scores = torch.matmul(query, key.transpose(-2, -1)) \
                  / math.sqrt(query.size(-1))
 
+        # attention mask,
+        # 目的：为了防止与mask掉的词作交互，attention score为-1e9
         if mask is not None:
             scores = scores.masked_fill(mask == 0, -1e9)
 
@@ -31,4 +33,5 @@ class Attention(nn.Module):
         if dropout is not None:
             p_attn = dropout(p_attn)
 
+        # 返回：attention, attention_score_vector
         return torch.matmul(p_attn, value), p_attn
